@@ -1,50 +1,60 @@
 const uuidv4 = require('uuid/v4')
+const uuidv5 = require('uuid/v5')
 
-class ErrorTrace {
-  constructor() {
-    this.uuid = uuidv4()
-    this.history = []
-    this.isActive = true
+const ErrorTracer = (() => {
+  return class ErrorTracer {
+    constructor() {
+      this.clientId = uuidv4()
+      this.history = []
+      this.isActive = false
 
-    this.init(arguments)
-  }
+      this.init(arguments)
+    }
 
-  active() {
-    this.isActive = true
-  }
+    active() {
+      this.isActive = true
+    }
 
-  deactive() {
-    this.isActive = false
-  }
+    deactive() {
+      this.isActive = false
+    }
 
-  reset() {
-    this.history = []
-    delete this.callback
-    delete this.apiURL
-    delete this.ignore
-  }
+    reset() {
+      this.history = []
+      delete this.callback
+      delete this.apiURL
+      delete this.ignore
+    }
 
-  init(args) {
-    if (args.length === 1 && args[0].constructor === Object) {
+    init(args) {
       this.root = window
-      this.callback = args[0].callback
-      this.apiURL = args[0].apiURL
+      this.sourceRange = 10
+      
+      if (args.length === 1 && args[0].constructor === Object) {
+        this.callback = args[0].callback
+        this.apiURL = args[0].apiURL
+        this.sourceRange = args[0].sourceRange || 10
 
-      if (args[0].ignore) {
-        this.ignore = Array.isArray(args[0].ignore) ? args[0].ignore : [args[0].ignore]
+        if (args[0].ignore) {
+          this.ignore = Array.isArray(args[0].ignore) ? args[0].ignore : [args[0].ignore]
+        }
       }
-    }
-    else if (args.length === 1 && typeof args[0] === 'function') {
-      this.root = window
-      this.callback = args[0]
-    }
+      else if (args.length === 1 && typeof args[0] === 'function') {
+        this.callback = args[0]
+      }
+      else if (args.length === 1 && typeof args[0] === 'string') {
+        this.apiURL = args[0]
+      }
 
-    this.root.addEventListener('error', this.errorHandler.bind(this))
-    this.root.addEventListener('unhandledrejection', this.errorHandler.bind(this))
-    this.root.addEventListener('rejectionhandled', this.errorHandler.bind(this))
+      this.root.addEventListener('error', errorHandler.bind(this))
+      this.root.addEventListener('unhandledrejection', errorHandler.bind(this))
+      this.root.addEventListener('rejectionhandled', errorHandler.bind(this))
+
+      this.active()
+    }  
   }
 
-  async errorHandler(error) {
+  async function errorHandler(error) {
     try {
       if (!this.isActive) {
         return null
@@ -60,7 +70,7 @@ class ErrorTrace {
         return null
       }
 
-      let item = await this.createErrorItem(error)
+      let item = await createErrorItem.call(this, error)
 
       this.history.push(item)
 
@@ -68,16 +78,17 @@ class ErrorTrace {
         this.callback(item)
       }
       if (this.apiURL) {
-        this.sendApi(item)
+        sendApi(item)
       }
     } catch (error) {
       // should do something.
     }
   }
 
-  async createErrorItem(error) {
+  async function createErrorItem(error) {
     let errorTracerItem = {
-      uuid: this.uuid,
+      errorId: uuidv5(JSON.stringify(error), this.clientId),
+      clientId: this.clientId,
       location: window.location.href,
       error,
       environment: {
@@ -90,14 +101,17 @@ class ErrorTrace {
     }
 
     if (error.filename && error.lineno) {
-      errorTracerItem.source = await this.getSource(error)
+      errorTracerItem.source = await getSource.call(this, error)
       errorTracerItem.errorLineNo = error.lineno
     }
 
     return errorTracerItem
   }
 
-  getSource({ filename, lineno }) {
+  function getSource({
+    filename,
+    lineno
+  }) {
     return fetch(filename)
       .then(res => {
         if (!res.ok) {
@@ -110,8 +124,9 @@ class ErrorTrace {
         let slicedSource = []
         try {
           const source = text.split(/\r?\n/)
+          const range = Math.ceil(this.sourceRange / 2)
 
-          for (let i=Math.max(0, lineno - 10); i<Math.min(source.length, lineno + 10); ++i) {
+          for (let i = Math.max(0, lineno - range); i < Math.min(source.length, lineno + range); ++i) {
             const lineNo = i + 1
             let lineString = {}
             lineString[lineNo] = source[i]
@@ -125,7 +140,7 @@ class ErrorTrace {
       })
   }
 
-  sendApi(ErrorTracerItem) {
+  function sendApi(ErrorTracerItem) {
     return fetch(this.apiURL, {
       method: 'POST',
       body: JSON.stringify(ErrorTracerItem),
@@ -149,6 +164,7 @@ class ErrorTrace {
       throw e
     })
   }
-}
+})()
 
-export default ErrorTrace
+
+export default ErrorTracer

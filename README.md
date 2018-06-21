@@ -4,16 +4,16 @@ Error-Tracer will help to trace client errors.
 
 ![ErrorTracer](https://user-images.githubusercontent.com/25057349/41692482-88432d6c-753b-11e8-9493-07a22aa3c6d6.png)
 
-1. **Collect client error.**
+1. **Collect client error.**  
 Our users don't report an error.
 
-2. **Capture the source code when error occurred.**
+2. **Capture the source code when error occurred.**  
 Sometimes our source codes are overwrittren. So it makes difficult to recognize what was the problem.
 
-3. **Capture the user environment when error occurred.**
+3. **Capture the user environment when error occurred.**  
 What was the user browser?
 What did user has data in local/sessionStorage or cookie?
-What time was it?
+What time was error occurred?
 
 
 ## Install
@@ -23,38 +23,45 @@ yarn add -D error-tracer
 ```
 or browser
 ```
-<script src="https://unpkg.com/error-tracer@0.1.3/dist/errortracer.bundle.js"></script>
+<script src="https://unpkg.com/error-tracer@0.1.5/dist/errortracer.bundle.js"></script>
 ```
 
 ## Import
 ```
 import ErrorTracer from 'error-tracer';
-cont ErrorTracer = require('error-tracer');
+const ErrorTracer = require('error-tracer');
 ```
 or browser
 ```
-<script src="https://unpkg.com/error-tracer@0.1.3/dist/errortracer.bundle.js"></script>
+<script src="https://unpkg.com/error-tracer@0.1.5/dist/errortracer.bundle.js"></script>
 ```
 
 ## Usage
-1. Construct with callback
+1. with Construct
 ```
-new ErrorTracer(function (errorItem) {
-  console.error("this is handled by error-tracer", errorItem);
-});
-```
-2. Construct with object parameter
-```
+// object
 new ErrorTracer({
   callback: function(e) { console.log(1, e) },
   apiURL: "http://aaa.com",
+  sourceRange: 30, // line range will be captured (default: 10)
   ignore: "error_message"
   // ignore: ["error_message1", "error_message1"]
 });
+
+// callback (function)
+new ErrorTracer(function (errorItem) {
+  console.error("this is handled by error-tracer", errorItem);
+});
+
+// apiURL (string)
+new ErrorTracer("http://xxx.com..."); // ErrorTracer Item will be posted
+
 ```
-3. call init function
+3. with init method
 ```
+// same with construct
 const errorTrace1 = new ErrorTracer();
+
 errorTrace1.init(function (errItem) {
   console.log("errItem: ", errItem);
 });
@@ -85,6 +92,8 @@ filter: if match the error message with filter, then ignore
 Below errorItem will be passed to callback/apiURL.
 ```
 {
+  errorId, // errorId
+  clientId, // unique browser fingerPrint
   error, // original error
   location, // error occured URL
   source, // source code around of error occured
@@ -95,7 +104,6 @@ Below errorItem will be passed to callback/apiURL.
     sessionStorage,
     cookie,
   },
-  uuid, // unique browser fingerPrint
   timeStamp
 }
 ```
@@ -125,6 +133,9 @@ Trigger with "Catch Hook" and make action like "Send Gmail".
   new ErrorTracer({
     apiURL: url,
   });
+
+  // or simpley
+  new ErrorTracer(url);
 </script>
 ```
 ![zapier](https://user-images.githubusercontent.com/25057349/41698810-5814cc52-755b-11e8-8226-b1787d7b9f69.png)
@@ -132,8 +143,11 @@ Trigger with "Catch Hook" and make action like "Send Gmail".
 Now when Error occured, you can get report the error.
 
 
+
 ## Author
 devjiro76@gmail.com
+
+
 
 ## License
 MIT

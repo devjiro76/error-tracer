@@ -23,7 +23,7 @@ yarn add -D error-tracer
 ```
 or browser
 ```
-<script src="https://unpkg.com/error-tracer@0.1.5/dist/errortracer.bundle.js"></script>
+<script src="https://unpkg.com/error-tracer@0.1.6/dist/errortracer.bundle.js"></script>
 ```
 
 ## Import
@@ -33,7 +33,7 @@ const ErrorTracer = require('error-tracer');
 ```
 or browser
 ```
-<script src="https://unpkg.com/error-tracer@0.1.5/dist/errortracer.bundle.js"></script>
+<script src="https://unpkg.com/error-tracer@0.1.6/dist/errortracer.bundle.js"></script>
 ```
 
 ## Usage
@@ -67,46 +67,35 @@ errorTrace1.init(function (errItem) {
 });
 ```
 ## API
-- init(parameter): initialize
-- active(): make Active
-- deactive(): make deactive
-- reset(): reset
+### Methods
+| Name              | Type     | parameter                            | description                          |
+|-------------------|----------|--------------------------------------|--------------------------------------|
+| init(_parameter_) | Function | _object_, _function_, _string_ | Initialize ErrorTracer               |
+| active()          | Function | __none__                             | Activate ErrorTracer (default: true) |
+| deactive          | Function | __none__                             | Deactivate ErrorTracer               |
+| history           | Array    | __none__                             |                                      |
 
-### Init with parameters
-1. callback
-init(_function_)
-
-2. use object as parameter
-init({
-  callback:_function_,
-  apiURL: _string_,
-  ignore: [_string_, _array_]
-}
-
->callback: callback function
-apiURL: target EndPoint URL which send errorItem
-filter: if match the error message with filter, then ignore
+### Parameters of init
+| Name        | Type          | description                                                | Example                                                   |
+|-------------|---------------|------------------------------------------------------------|-----------------------------------------------------------|
+| callback    | Function      | callback function for errorItem                            | `function(e) { console.log("ErrorTracer Catch:" ,e); }` |
+| apiURL      | String        | if assigned, errorItem will be passed                      | "https://zapier..."                                       |
+| sourceRange | Integer       | The range of source code will be captured at around error  | 30 (Above 15 lines and Below 15 lines)                    |
+| ignore      | Array[String] | Error message will be ignored in ErrorTracer               | ["Custom_Error1", Customer_Error2"]  
 
 
 ## ErrorTracer will capture
 Below errorItem will be passed to callback/apiURL.
-```
-{
-  errorId, // errorId
-  clientId, // unique browser fingerPrint
-  error, // original error
-  location, // error occured URL
-  source, // source code around of error occured
-  errorLineNo, // line no which error occured
-  environment: { // environment when error occured
-    navigator,
-    localstorage,
-    sessionStorage,
-    cookie,
-  },
-  timeStamp
-}
-```
+| Name        | Type          | Description                                                         |
+|-------------|---------------|---------------------------------------------------------------------|
+| errorId     | String        | Unique Error Id                                                     |
+| clientId    | String        | Unique Client Id                                                    |
+| error       | Object        | Original Error Event Object                                         |
+| location    | String        | Location which error occurred                                       |
+| source      | Array[Object] | Source code around of error. Object contains 'lineNo' and 'content' |
+| errorLineNo | Integer       | Line number of source code                                          |
+| environment | Object        | navigator, localStorage, sessionStorage, cookie                     |
+| timeStamp   | Time          | Date.now()                                                          |
 
 ## ErrorTracer History
 ```

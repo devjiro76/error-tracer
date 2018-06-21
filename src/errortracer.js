@@ -128,9 +128,12 @@ const ErrorTracer = (() => {
 
           for (let i = Math.max(0, lineno - range); i < Math.min(source.length, lineno + range); ++i) {
             const lineNo = i + 1
-            let lineString = {}
-            lineString[lineNo] = source[i]
-            slicedSource.push(lineString)
+            const content = source[i]
+
+            slicedSource.push({
+              lineNo,
+              content,
+            })
           }
         } catch (e) {
           e.code = "ERRORTRACE"

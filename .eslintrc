@@ -1,0 +1,11 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module"
+  },
+  "rules": {
+    "es6": true,
+    "comma-dangle": 0,
+    "prefer-destructuring": 0
+  }
+}

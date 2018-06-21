@@ -1,0 +1,7 @@
+node_modules/
+dist/
+*.lock
+yarn-error.log
+.vscode/
+test/zapier2.html
+.npmignore

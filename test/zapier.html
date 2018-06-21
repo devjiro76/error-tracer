@@ -1,0 +1,31 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Error-Tracer[Zapier]</title>
+</head>
+
+<body>
+  <div id="space">
+    <h1>Click below button to trigger Error</h1>
+    <button id="triggerError">Error!</button>
+  </div>
+</body>
+
+<script src="errortracer.bundle.js"></script>
+<script>
+  document.querySelector("#triggerError")
+    .addEventListener("click", function () {
+      notExist();
+    });
+
+ const zapier = "https://xxxxx/"; // Your Zapier Webhook URL
+
+  new ErrorTracer({
+    apiURL: zapier,
+  });
+</script>
+
+</html>

@@ -73,9 +73,9 @@ errorTrace1.init(function (errItem) {
 | init(_parameter_) | Function | _object_, _function_, _string_ | Initialize ErrorTracer               |
 | active()          | Function | __none__                             | Activate ErrorTracer (default: true) |
 | deactive          | Function | __none__                             | Deactivate ErrorTracer               |
-| history           | Array    | __none__                             |                                      |
+| history           | Array[Object]    | __none__                             | ErrorTracer History                  |
 
-### Parameters of init
+### Parameters for init
 | Name        | Type          | description                                                | Example                                                   |
 |-------------|---------------|------------------------------------------------------------|-----------------------------------------------------------|
 | callback    | Function      | callback function for errorItem                            | `function(e) { console.log("ErrorTracer Catch:" ,e); }` |
@@ -86,6 +86,7 @@ errorTrace1.init(function (errItem) {
 
 ## ErrorTracer will capture
 Below errorItem will be passed to callback/apiURL.
+
 | Name        | Type          | Description                                                         |
 |-------------|---------------|---------------------------------------------------------------------|
 | errorId     | String        | Unique Error Id                                                     |

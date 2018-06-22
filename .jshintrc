@@ -1,4 +1,6 @@
 {
   "esversion": 6,
-  "asi": true
+  "asi": true,
+  "validthis": true,
+  "globals": true
 }

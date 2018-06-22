@@ -1,7 +1,9 @@
+'use strict';
+
 const uuidv4 = require('uuid/v4')
 const uuidv5 = require('uuid/v5')
 
-const ErrorTracer = (() => {
+const ErrorTracer = ((global) => {
   return class ErrorTracer {
     constructor() {
       this.clientId = uuidv4()
@@ -29,7 +31,7 @@ const ErrorTracer = (() => {
     }
 
     init(args) {
-      this.root = window
+      this.root = global
       this.sourceRange = 10
       
       if (args.length === 1 && args[0].constructor === Object) {
@@ -51,72 +53,75 @@ const ErrorTracer = (() => {
         return null
       }
 
-      this.root.addEventListener('error', errorHandler.bind(this))
-      this.root.addEventListener('unhandledrejection', errorHandler.bind(this))
-      this.root.addEventListener('rejectionhandled', errorHandler.bind(this))
+      this.root.addEventListener('error', _errorHandler.bind(this))
+      this.root.addEventListener('unhandledrejection', _errorHandler.bind(this))
+      this.root.addEventListener('rejectionhandled', _errorHandler.bind(this))
 
       this.active()
     }  
   }
 
-  async function errorHandler(error) {
+  async function _errorHandler(error) {
+    const errorTracer = this
     try {
-      if (!this.isActive) {
+      if (!errorTracer.isActive) {
         return null
       }
 
-      if (this.ignore && this.ignore.includes(error.message)) {
+      if (errorTracer.ignore && errorTracer.ignore.includes(error.message)) {
         return null
       }
 
       if (error.reason && error.reason.code === "ERRORTRACE") {
+        if (process && process.env && process.env.NODE_ENV === 'development') {
+          console.log("[ErrorTracer DevMode] ", error)
+        }
+
         error.preventDefault()
         error.stopPropagation()
         return null
       }
 
-      let item = await createErrorItem.call(this, error)
+      let item = await _createErrorItem.call(errorTracer, error)
+      errorTracer.history.push(item)
 
-      this.history.push(item)
-
-      if (this.callback) {
-        this.callback(item)
+      if (errorTracer.callback) {
+        errorTracer.callback(item)
       }
-      if (this.apiURL) {
-        sendApi(item)
+
+      if (errorTracer.apiURL) {
+        _sendApi(errorTracer.apiURL, item)
       }
     } catch (error) {
       // should do something.
     }
   }
 
-  async function createErrorItem(error) {
-    let errorTracerItem = {
-      errorId: uuidv5(JSON.stringify(error), this.clientId),
-      clientId: this.clientId,
-      location: window.location.href,
+  async function _createErrorItem(error) {
+    const errorTracer = this
+    let item = {
+      errorId: uuidv5(JSON.stringify(error), errorTracer.clientId),
+      clientId: errorTracer.clientId,
+      location: errorTracer.root.location.href,
       error,
       environment: {
-        navigator: window.navigator,
+        navigator: errorTracer.root.navigator,
         localStorage,
         sessionStorage,
-        cookie: document.cookie,
+        cookie: errorTracer.root.document.cookie,
       },
       timeStamp: Date.now(),
     }
 
     if (error.filename && error.lineno) {
-      errorTracerItem.source = await getSource.call(this, error)
-      errorTracerItem.errorLineNo = error.lineno
+      item.source = await _getSource.call(errorTracer, error)
+      item.errorLineNo = error.lineno
     }
 
-    return errorTracerItem
+    return item
   }
 
-  function getSource({
-    filename,
-    lineno
-  }) {
+  function _getSource({ filename, lineno }) {
     return fetch(filename)
       .then(res => {
         if (!res.ok) {
@@ -148,8 +153,8 @@ const ErrorTracer = (() => {
       })
   }
 
-  function sendApi(ErrorTracerItem) {
-    return fetch(this.apiURL, {
+  function _sendApi(apiURL, ErrorTracerItem) {
+    return fetch(apiURL, {
       method: 'POST',
       body: JSON.stringify(ErrorTracerItem),
       cache: 'no-cache',
@@ -172,7 +177,7 @@ const ErrorTracer = (() => {
       throw e
     })
   }
-})()
+})(global || window)
 
 
 export default ErrorTracer

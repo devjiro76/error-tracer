@@ -21,6 +21,8 @@ const ErrorTracer = (() => {
 
     reset() {
       this.history = []
+      this.isActive = false
+      
       delete this.callback
       delete this.apiURL
       delete this.ignore
@@ -44,6 +46,9 @@ const ErrorTracer = (() => {
       }
       else if (args.length === 1 && typeof args[0] === 'string') {
         this.apiURL = args[0]
+      }
+      else {
+        return null
       }
 
       this.root.addEventListener('error', errorHandler.bind(this))
@@ -160,7 +165,7 @@ const ErrorTracer = (() => {
         e.code = "ERRORTRACE"
         throw e
       }
-      return res;
+      return res
     })
     .catch(e => {
       e.code = "ERRORTRACE"

@@ -4,7 +4,7 @@
   "main": "dist/errortracer.js",
   "license": "MIT",
   "scripts": {
-    "dev": "webpack-dev-server",
+    "dev": "cross-env NODE_ENV=dev webpack-dev-server",
     "build": "babel src/errortracer.js -o dist/errortracer.js",
     "bundle": "webpack",
     "package": "rimraf ./dist/* && yarn build && yarn bundle"
@@ -16,6 +16,7 @@
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-transform-es2015-modules-umd": "^6.24.1",
     "babel-preset-es2015": "^6.24.1",
+    "cross-env": "^5.2.0",
     "fingerprint": "^0.0.1",
     "rimraf": "^2.6.2",
     "webpack": "^4.12.0",

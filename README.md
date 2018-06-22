@@ -38,8 +38,8 @@ or browser
 ```
 
 ## Usage
-1. with Constructor
-### object (you can set callback, apiURL, sourceRange and ignore)
+### with Constructor
+1. object (you can set callback, apiURL, sourceRange and ignore)
 ```
 new ErrorTracer({
   callback: function(e) { console.log(1, e) },
@@ -49,19 +49,19 @@ new ErrorTracer({
   // ignore: ["Custom_Error1", Customer_Error2"]
 });
 ```
-### callback (you can set just only callback function)
+2. function (you can set just only callback function)
 ```
 new ErrorTracer(function (errorItem) {
   console.error("this is handled by error-tracer", errorItem);
 });
 ```
-### apiURL (you can set just apiURL which get report)
+3. string (you can set just apiURL which get report)
 ```
 new ErrorTracer("http://xxx.com..."); // ErrorTracer Item will be posted
 ```
 
-2. with init method
-### same usage with constructor
+### with init method
+> same usage with constructor
 ```
 const errorTrace1 = new ErrorTracer();
 

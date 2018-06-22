@@ -114,14 +114,14 @@ const ErrorTracer = ((global) => {
     }
 
     if (error.filename && error.lineno) {
-      item.source = await _getSource.call(errorTracer, error)
+      item.source = await _getSource.call(errorTracer.sourceRange, error.filename, error.lineno)
       item.errorLineNo = error.lineno
     }
 
     return item
   }
 
-  function _getSource({ filename, lineno }) {
+  function _getSource(sourceRange, filename, lineno) {
     return fetch(filename)
       .then(res => {
         if (!res.ok) {
@@ -134,7 +134,7 @@ const ErrorTracer = ((global) => {
         let slicedSource = []
         try {
           const source = text.split(/\r?\n/)
-          const range = Math.ceil(this.sourceRange / 2)
+          const range = Math.ceil(sourceRange / 2)
 
           for (let i = Math.max(0, lineno - range); i < Math.min(source.length, lineno + range); ++i) {
             const lineNo = i + 1

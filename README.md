@@ -1,4 +1,5 @@
 # Error-Tracer
+[![DeepScan grade](https://deepscan.io/api/projects/2684/branches/18686/badge/grade.svg)](https://deepscan.io/dashboard#view=project&pid=2684&bid=18686)
 
 Error-Tracer will help to trace client errors.
 

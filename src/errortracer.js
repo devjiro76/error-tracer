@@ -26,11 +26,11 @@ const ErrorTracer = ((global) => {
     }
 
     perpare() {
-      this.target = ['error', 'unhandledrejection', 'rejectionhandled']
+      this.triggers = ['error', 'unhandledrejection', 'rejectionhandled']
       this.callback = undefined
       this.apiURL = undefined
       this.sourceRange = 10
-      this.ignore = []
+      this.ignores = []
       this.history = []
     }
 
@@ -44,12 +44,14 @@ const ErrorTracer = ((global) => {
       const arg = args[0]
 
       if (arg.constructor === Object) {
-        this.target = arg.target || this.target
+        if (arg.triggers) {
+          this.triggers = Array.isArray(arg.triggers) ? arg.triggers : [arg.triggers]
+        }
         this.callback = arg.callback || this.call
         this.apiURL = arg.apiURL || this.apiURL
         this.sourceRange = arg.sourceRange || this.sourceRange
-        if (arg.ignore) {
-          this.ignore = Array.isArray(arg.ignore) ? arg.ignore : [arg.ignore]
+        if (arg.ignores) {
+          this.ignores = Array.isArray(arg.ignore) ? arg.ignores : [arg.ignores]
         }
       } else if (typeof arg === 'function') {
         this.callback = arg
@@ -57,8 +59,8 @@ const ErrorTracer = ((global) => {
         this.apiURL = arg
       }
 
-      this.target.forEach(item => {
-        this.root.addEventListener(item, _errorHandler.bind(this))
+      this.triggers.forEach(trigger => {
+        this.root.addEventListener(trigger, _errorHandler.bind(this))
       })
 
       this.active()
@@ -72,7 +74,7 @@ const ErrorTracer = ((global) => {
         return null
       }
 
-      if (errorTracer.ignore && errorTracer.ignore.includes(error.message)) {
+      if (errorTracer.ignores && errorTracer.ignores.includes(error.message)) {
         return null
       }
 
@@ -129,7 +131,9 @@ const ErrorTracer = ((global) => {
     return fetch(filename)
       .then(res => {
         if (!res.ok) {
-          throw new Error(res.statusText);
+          const e = new Error(res.statusText)
+          e.code = "ERRORTRACE"
+          throw e
         }
         return res;
       })

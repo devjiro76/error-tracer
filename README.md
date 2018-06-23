@@ -40,17 +40,17 @@ or browser
 
 ## Usage
 ### with Constructor
-Note that default target error events are `'error', 'unhandledrejection', 'rejectionhandled'`.
+Note that default trigger error events are `'error', 'unhandledrejection', 'rejectionhandled'`.
 
-1. object (you can set callback, apiURL, sourceRange and ignore)
+1. object (you can set triggers(error), callback, apiURL, sourceRange and ignores)
 ```
 new ErrorTracer({
-  target: ['my_custome_error1', 'other_error'], // error events which observed
+  triggers: ['my_custome_error1', 'other_error'], // error events which observed
   callback: function(e) { console.log(1, e) },
   apiURL: "http://aaa.com",
   sourceRange: 30, // line range will be captured (default: 10)
-  ignore: "error_message"
-  // ignore: ["Custom_Error1", Customer_Error2"]
+  ignores: "error_message"
+  // ignores: ["Custom_Error1", Customer_Error2"]
 });
 ```
 2. function (you can set just only callback function)
@@ -86,11 +86,11 @@ errorTrace1.init(function (errItem) {
 ### Parameters for init
 | Name        | Type          | description                                                | Example                                                   |
 |-------------|---------------|------------------------------------------------------------|-----------------------------------------------------------|
-| targets     | Array[String] | Error events will be observed. default `['error', 'unhandledrejection', 'rejectionhandled']` | `['my_custome_error1', 'other_error']`       |
+| triggers     | Array[String] | Error events will be observed. default `['error', 'unhandledrejection', 'rejectionhandled']` | `['my_custome_error1', 'other_error']`       |
 | callback    | Function      | callback function for errorItem                            | `function(e) { console.log("ErrorTracer Catch:" ,e); }`   |
 | apiURL      | String        | if assigned, errorItem will be passed                      | "https://zapier..."                                       |
 | sourceRange | Integer       | The range of source code will be captured at around error  | 30 (Above 15 lines and Below 15 lines)                    |
-| ignore      | Array[String] | Error message will be ignored in ErrorTracer               | ["Custom_Error1", Customer_Error2"]  
+| ignores      | Array[String] | Error message will be ignored in ErrorTracer               | ["Custom_Error1", Customer_Error2"]  
 
 
 ## ErrorTracer will capture below information

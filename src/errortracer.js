@@ -7,8 +7,7 @@ const ErrorTracer = ((global) => {
   return class ErrorTracer {
     constructor() {
       this.clientId = uuidv4()
-      this.history = []
-      this.isActive = false
+      this.root = global
 
       this.init(arguments)
     }
@@ -22,40 +21,45 @@ const ErrorTracer = ((global) => {
     }
 
     reset() {
+      this.perpare()
+      this.deactive()
+    }
+
+    perpare() {
+      this.target = ['error', 'unhandledrejection', 'rejectionhandled']
+      this.callback = undefined
+      this.apiURL = undefined
+      this.sourceRange = 10
+      this.ignore = []
       this.history = []
-      this.isActive = false
-      
-      delete this.callback
-      delete this.apiURL
-      delete this.ignore
     }
 
     init(args) {
-      this.root = global
-      this.sourceRange = 10
-      
-      if (args.length === 1 && args[0].constructor === Object) {
-        this.callback = args[0].callback
-        this.apiURL = args[0].apiURL
-        this.sourceRange = args[0].sourceRange || 10
+      this.perpare()
 
-        if (args[0].ignore) {
-          this.ignore = Array.isArray(args[0].ignore) ? args[0].ignore : [args[0].ignore]
-        }
-      }
-      else if (args.length === 1 && typeof args[0] === 'function') {
-        this.callback = args[0]
-      }
-      else if (args.length === 1 && typeof args[0] === 'string') {
-        this.apiURL = args[0]
-      }
-      else {
+      if (args.length !== 1) {
         return null
       }
 
-      this.root.addEventListener('error', _errorHandler.bind(this))
-      this.root.addEventListener('unhandledrejection', _errorHandler.bind(this))
-      this.root.addEventListener('rejectionhandled', _errorHandler.bind(this))
+      const arg = args[0]
+
+      if (arg.constructor === Object) {
+        this.target = arg.target || this.target
+        this.callback = arg.callback || this.call
+        this.apiURL = arg.apiURL || this.apiURL
+        this.sourceRange = arg.sourceRange || this.sourceRange
+        if (arg.ignore) {
+          this.ignore = Array.isArray(arg.ignore) ? arg.ignore : [arg.ignore]
+        }
+      } else if (typeof arg === 'function') {
+        this.callback = arg
+      } else if (typeof arg === 'string') {
+        this.apiURL = arg
+      }
+
+      this.target.forEach(item => {
+        this.root.addEventListener(item, _errorHandler.bind(this))
+      })
 
       this.active()
     }  
@@ -114,7 +118,7 @@ const ErrorTracer = ((global) => {
     }
 
     if (error.filename && error.lineno) {
-      item.source = await _getSource.call(errorTracer.sourceRange, error.filename, error.lineno)
+      item.source = await _getSource(errorTracer.sourceRange, error.filename, error.lineno)
       item.errorLineNo = error.lineno
     }
 

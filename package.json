@@ -1,6 +1,6 @@
 {
   "name": "error-tracer",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "main": "dist/errortracer.js",
   "license": "MIT",
   "scripts": {

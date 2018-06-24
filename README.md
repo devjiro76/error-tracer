@@ -51,6 +51,7 @@ new ErrorTracer({
   sourceRange: 30, // line range will be captured (default: 10)
   ignores: "error_message"
   // ignores: ["Custom_Error1", Customer_Error2"]
+  // detail: userId, // # you can set extra detail information
 });
 ```
 2. function (you can set just only callback function)
@@ -106,7 +107,7 @@ Below errorItem will be passed to callback/apiURL.
 | source      | Array[Object] | Source code around of error. Object contains 'lineNo' and 'content' |
 | errorLineNo | Integer       | Line number of source code                                          |
 | environment | Object        | navigator, localStorage, sessionStorage, cookie                     |
-| detail      |               | extra info which you set                                            |
+| detail      |               | detail info which you set                                            |
 | timeStamp   | Time          | Date.now()                                                          |
 
 ## ErrorTracer History

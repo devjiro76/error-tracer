@@ -35,6 +35,10 @@ const ErrorTracer = ((global) => {
       this.detail = undefined
     }
 
+    push() {
+      _errorHandler.call(this, arguments.length ?  arguments[0] : null)
+    }
+
     init(args) {
       if (args.length !== 1) {
         return null
@@ -126,14 +130,16 @@ const ErrorTracer = ((global) => {
     }
 
     if (error.filename && error.lineno) {
-      item.source = await _getSource(errorTracer.sourceRange, error.filename, error.lineno)
+      item.source = await _getSource(error.filename, error.lineno, errorTracer.sourceRange)
       item.errorLineNo = error.lineno
     }
 
     return item
   }
 
-  function _getSource(sourceRange, filename, lineno) {
+  function _getSource(filename, lineno, _sourceRange) {
+    const sourceRange = _sourceRange || 10
+    
     return fetch(filename)
       .then(res => {
         if (!res.ok) {

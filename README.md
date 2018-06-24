@@ -97,7 +97,8 @@ errorTrace1.init(function (errItem) {
 
 
 ## ErrorTracer will return below information
-Below errorItem will be passed to callback/apiURL.
+Below errorItem will be passed to callback/apiURL.  
+>Note that ErrorTracer can't return source code info with VueJS.  
 
 | Name        | Type          | Description                                                         |
 |-------------|---------------|---------------------------------------------------------------------|
@@ -147,19 +148,22 @@ Trigger with "Catch Hook" and make action like "Send Gmail".
 Now when Error occured, you can get report via Gmail about the error.
 
 ### #2 Use with VueJS
+Create an instance in 'main.js' (or any file which vuejs is imported) pass the 'vuejs error' to ErrorTracer.  
 
+>Note that ErrorTracer can't return source code info with VueJS.  
+>ErrorTracer can find source code info only when error has the filename and lineNo.
 ```
 // import ErrorTracer
 import ErrorTracer from 'error-tracer'
 
-// generate Instance
-const errTracer = new ErrorTracer(function(err) {
+// create errorTracer Instance
+const myTracer = new ErrorTracer(function(err) {
   console.log("ErrorTracerCathch!: ", err);
 })
 
 // Pass the 'Vue Error' to ErrorTracer
 Vue.config.errorHandler = function(err, vm, info) {
-  errTracer.push(err)
+  myTracer.push(err); // <-- Yes Here! :)
 }
 ```
 

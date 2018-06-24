@@ -77,12 +77,13 @@ errorTrace1.init(function (errItem) {
 
 ## API
 ### Methods
-| Name              | Type     | parameter                            | description                          |
-|-------------------|----------|--------------------------------------|--------------------------------------|
-| init(_parameter_) | Function | _object_, _function_, _string_ | Initialize ErrorTracer               |
-| active()          | Function | __none__                             | Activate ErrorTracer (default: true) |
-| deactive          | Function | __none__                             | Deactivate ErrorTracer               |
-| history           | Array[Object]    | __none__                             | ErrorTracer History                  |
+| Name              | Type          | parameter                            | description                          |
+|-------------------|---------------|--------------------------------------|--------------------------------------|
+| init(_parameter_) | Function      | _object_, _function_, _string_       | Initialize ErrorTracer               |
+| active()          | Function      | __none__                             | Activate ErrorTracer (default: true) |
+| deactive()        | Function      | __none__                             | Deactivate ErrorTracer               |
+| push(_error_)     | Function      | _error_                              | Manually input error                 |
+| history           | Array[Object] | __none__                             | ErrorTracer History                  |
 
 ### Parameters for init
 | Name        | Type          | description                                                | Example                                                   |
@@ -92,7 +93,7 @@ errorTrace1.init(function (errItem) {
 | apiURL      | String        | if assigned, errorItem will be passed                      | "https://zapier..."                                       |
 | sourceRange | Integer       | The range of source code will be captured at around error  | 30 (Above 15 lines and Below 15 lines)                    |
 | ignores     | Array[String] | Error message will be ignored in ErrorTracer               | ["Custom_Error1", Customer_Error2"]                       |
-| detail      |               | Information what you want to add                           | userId, sessionId, remote_ip,... whatever                 |
+| detail      | Any           | Information what you want to add                           | userId, sessionId, remote_ip,... whatever                 |
 
 
 ## ErrorTracer will return below information
@@ -107,7 +108,7 @@ Below errorItem will be passed to callback/apiURL.
 | source      | Array[Object] | Source code around of error. Object contains 'lineNo' and 'content' |
 | errorLineNo | Integer       | Line number of source code                                          |
 | environment | Object        | navigator, localStorage, sessionStorage, cookie                     |
-| detail      |               | detail info which you set                                            |
+| detail      | Any           | detail info which you set                                            |
 | timeStamp   | Time          | Date.now()                                                          |
 
 ## ErrorTracer History
@@ -120,7 +121,8 @@ const errorTracer = new ErrorTracer(function(errorItem) {
 console.log(errorTracer.history);
 ```
 
-## Example #1 (Send ZapierWebHook)
+## Examples
+### #1 Send ZapierWebHook
 You can easily collect error with [Zapier](https://zapier.com).
 Trigger with "Catch Hook" and make action like "Send Gmail".
 ```
@@ -144,7 +146,22 @@ Trigger with "Catch Hook" and make action like "Send Gmail".
 
 Now when Error occured, you can get report via Gmail about the error.
 
+### #2 Use with VueJS
 
+```
+// import ErrorTracer
+import ErrorTracer from 'error-tracer'
+
+// generate Instance
+const errTracer = new ErrorTracer(function(err) {
+  console.log("ErrorTracerCathch!: ", err);
+})
+
+// Pass the 'Vue Error' to ErrorTracer
+Vue.config.errorHandler = function(err, vm, info) {
+  errTracer.push(err)
+}
+```
 
 ## Author
 devjiro76@gmail.com

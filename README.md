@@ -98,19 +98,19 @@ errorTrace1.init(function (errItem) {
 
 ## ErrorTracer will return below information
 Below errorItem will be passed to callback/apiURL.  
->Note that ErrorTracer can't return source code info with VueJS.  
+>ErrorTracer will return 'source' info only when error has the filename and lineNo.  
 
-| Name        | Type          | Description                                                         |
-|-------------|---------------|---------------------------------------------------------------------|
-| errorId     | String        | Unique Error Id                                                     |
-| clientId    | String        | Unique Client Id                                                    |
-| error       | Object        | Original Error Event Object                                         |
-| location    | String        | Location which error occurred                                       |
-| source      | Array[Object] | Source code around of error. Object contains 'lineNo' and 'content' |
-| errorLineNo | Integer       | Line number of source code                                          |
-| environment | Object        | navigator, localStorage, sessionStorage, cookie                     |
-| detail      | Any           | detail info which you set                                            |
-| timeStamp   | Time          | Date.now()                                                          |
+| Name        | Type            | Description                                                         |
+|-------------|-----------------|---------------------------------------------------------------------|
+| errorId     | String          | Unique Error Id                                                     |
+| clientId    | String          | Unique Client Id                                                    |
+| error       | Object          | Original Error Event Object                                         |
+| location    | String          | Location which error occurred                                       |
+| _*source_   | Array[Object]   | Source code around of error. Object contains 'lineNo' and 'content' |
+| errorLineNo | Integer         | Line number of source code                                          |
+| environment | Object          | navigator, localStorage, sessionStorage, cookie                     |
+| detail      | Any             | detail info which you set                                           |
+| timeStamp   | Time            | Date.now()                                                          |
 
 ## ErrorTracer History
 ```
@@ -150,8 +150,8 @@ Now when Error occured, you can get report via Gmail about the error.
 ### #2 Use with VueJS
 Create an instance in 'main.js' (or any file which vuejs is imported) pass the 'vuejs error' to ErrorTracer.  
 
->Note that ErrorTracer can't return source code info with VueJS.  
->ErrorTracer can find source code info only when error has the filename and lineNo.
+>ErrorTracer will return 'source' info only when error has the filename and lineNo.  
+>Unfortunately ErrorTracer can't return 'source' info with Vue (Vue can't give those info).  
 ```
 // import ErrorTracer
 import ErrorTracer from 'error-tracer'

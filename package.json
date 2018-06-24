@@ -4,7 +4,7 @@
   "main": "dist/errortracer.js",
   "license": "MIT",
   "scripts": {
-    "dev": "cross-env NODE_ENV=dev webpack-dev-server",
+    "dev": "cross-env NODE_ENV=dev webpack-dev-server --config ./webpack.config.dev.js",
     "build": "babel src/errortracer.js -o dist/errortracer.js",
     "bundle": "webpack --config ./webpack.config-bundle.js",
     "package": "rimraf ./dist/* && yarn build && yarn bundle"

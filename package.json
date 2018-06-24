@@ -4,10 +4,8 @@
   "main": "dist/errortracer.js",
   "license": "MIT",
   "scripts": {
-    "dev": "cross-env NODE_ENV=dev webpack-dev-server",
-    "build": "babel src/errortracer.js -o dist/errortracer.js",
-    "bundle": "webpack",
-    "package": "rimraf ./dist/* && yarn build && yarn bundle"
+    "dev": "cross-env NODE_ENV=dev webpack-dev-server --config ./webpack.config-dev.js",
+    "build": "rimraf ./dist/* && webpack --config ./webpack.config-prod.js"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

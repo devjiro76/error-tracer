@@ -32,30 +32,35 @@ const ErrorTracer = ((global) => {
       this.sourceRange = 10
       this.ignores = []
       this.history = []
+      this.detail = undefined
     }
 
     init(args) {
-      this.perpare()
-
       if (args.length !== 1) {
         return null
       }
 
+      this.perpare()
       const arg = args[0]
 
       if (arg.constructor === Object) {
         if (arg.triggers) {
           this.triggers = Array.isArray(arg.triggers) ? arg.triggers : [arg.triggers]
         }
-        this.callback = arg.callback || this.call
-        this.apiURL = arg.apiURL || this.apiURL
-        this.sourceRange = arg.sourceRange || this.sourceRange
         if (arg.ignores) {
-          this.ignores = Array.isArray(arg.ignore) ? arg.ignores : [arg.ignores]
+          this.ignores = Array.isArray(arg.ignores) ? arg.ignores : [arg.ignores]
         }
-      } else if (typeof arg === 'function') {
+        this.callback = arg.callback
+        this.apiURL = arg.apiURL
+        this.sourceRange = arg.sourceRange
+        this.detail = arg.detail
+      }
+      
+      else if (typeof arg === 'function') {
         this.callback = arg
-      } else if (typeof arg === 'string') {
+      }
+      
+      else if (typeof arg === 'string') {
         this.apiURL = arg
       }
 
@@ -117,6 +122,7 @@ const ErrorTracer = ((global) => {
         cookie: errorTracer.root.document.cookie,
       },
       timeStamp: Date.now(),
+      detail: errorTracer.detail,
     }
 
     if (error.filename && error.lineno) {

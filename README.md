@@ -90,10 +90,11 @@ errorTrace1.init(function (errItem) {
 | callback    | Function      | callback function for errorItem                            | `function(e) { console.log("ErrorTracer Catch:" ,e); }`   |
 | apiURL      | String        | if assigned, errorItem will be passed                      | "https://zapier..."                                       |
 | sourceRange | Integer       | The range of source code will be captured at around error  | 30 (Above 15 lines and Below 15 lines)                    |
-| ignores      | Array[String] | Error message will be ignored in ErrorTracer               | ["Custom_Error1", Customer_Error2"]  
+| ignores     | Array[String] | Error message will be ignored in ErrorTracer               | ["Custom_Error1", Customer_Error2"]                       |
+| detail      |               | Information what you want to add                           | userId, sessionId, remote_ip,... whatever                 |
 
 
-## ErrorTracer will capture below information
+## ErrorTracer will return below information
 Below errorItem will be passed to callback/apiURL.
 
 | Name        | Type          | Description                                                         |
@@ -105,6 +106,7 @@ Below errorItem will be passed to callback/apiURL.
 | source      | Array[Object] | Source code around of error. Object contains 'lineNo' and 'content' |
 | errorLineNo | Integer       | Line number of source code                                          |
 | environment | Object        | navigator, localStorage, sessionStorage, cookie                     |
+| detail      |               | extra info which you set                                            |
 | timeStamp   | Time          | Date.now()                                                          |
 
 ## ErrorTracer History

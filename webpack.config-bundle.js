@@ -2,15 +2,11 @@ const path = require('path')
 
 module.exports = {
   mode: 'production',
-  entry: {
-    'errortracer': './src/errortracer.js',
-    'errortracer.bundle': './src/index.js'
-  },
+  entry: ['./src/index.js'],
   output: {
     path: path.join(__dirname, 'dist'),
     publicPath: '',
-    filename: '[name].js',
-    // sourceMapFilename: "[name].js.map",
+    filename: 'errortracer.bundle.js',
   },
   module: {
     rules: [{

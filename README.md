@@ -168,7 +168,7 @@ Vue.config.errorHandler = function(err, vm, info) {
 ```
 
 ## Author
-devjiro76@gmail.com
+visualbbasic@gmail.com
 
 
 

@@ -3,7 +3,7 @@
 
 Error-Tracer will help to trace client errors.
 
-![ErrorTracer](https://user-images.githubusercontent.com/25057349/41692482-88432d6c-753b-11e8-9493-07a22aa3c6d6.png)
+![ErrorTracer](https://i.imgur.com/QHV7GeY.jpeg)
 
 1. **Collect client error.**  
 Users don't report an error. They just go away and forget the error.
